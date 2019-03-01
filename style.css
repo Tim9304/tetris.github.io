@@ -1,0 +1,92 @@
+html, body {
+padding: 0;
+margin:0;
+}
+
+.grid-box {
+position:absolute;
+z-index:-1;
+background-color:black;
+display: grid;
+grid-template-columns: repeat(10, 100px);
+grid-template-rows: repeat(15, 100px);
+height:1000px;
+width:1000px;
+left:0px;
+top:50px
+
+}
+
+.box{
+    border: 1px solid rgb(255, 255, 255);
+}
+
+.startItem{
+  /*grid-column-start: 5;
+  grid-row-start: 2;*/  
+  left:500px;
+  top:0px;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+}
+
+.myButton {
+color: rgb(255, 255, 255);
+font-size: 12px;
+line-height: 12px; 
+padding: 4px; border-radius: 0px; 
+font-family: Georgia, serif;
+font-weight: normal;
+text-decoration: none;
+font-style: normal; 
+font-variant: normal;
+text-transform: none;
+background-color: blue;
+box-shadow: rgb(0, 0, 0) 5px 5px 15px 5px; 
+border: 2px solid rgb(115, 6, 158);
+display: inline-block;
+  }
+    .myButton:hover
+     {
+    background: #1C6EA4; 
+}
+    .myButton:active 
+    {
+    background: #144E75; 
+}
+
+
+.myScore{
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+    line-height: 12px; 
+    padding: 4px; border-radius: 0px; 
+    font-family: Georgia, serif;
+    font-weight: normal;
+    text-decoration: none;
+    font-style: normal; 
+    font-variant: normal;
+    text-transform: none;
+    background-color: blue;
+    box-shadow: rgb(0, 0, 0) 5px 5px 15px 5px; 
+    border: 2px solid rgb(115, 6, 158);
+    display: inline-block;
+      }
+        .myButton:hover
+         {
+        background: #1C6EA4; 
+    }
+        .myButton:active 
+        {
+        background: #144E75; 
+    }
+    
+    
+
+
+
+
+
+
+

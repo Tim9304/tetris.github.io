@@ -1,0 +1,335 @@
+<html>
+
+<head>
+
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript">
+
+        var alle_elemente = [];
+        var stille_elemente = [];
+        var score = 0;
+        var links = false;
+        var rechts = false;
+        var myScore;
+        var pause = false;
+
+        window.onload = function () {
+
+            for (var i = 0; i < 150; i++) {
+                var element = document.createElement('div');
+                element.className = 'box';
+                document.getElementById('Spielfeld').appendChild(element);
+            }
+            NeuesElement()
+        }
+
+
+
+
+
+        document.onkeydown = function (e) {
+            if (e.keyCode == 65) {
+                links = true;
+            } else if (e.keyCode == 68) {
+                rechts = true;
+            }
+            if (pause) {
+                return;
+            }
+            var Spielfeld = document.getElementById('Spielfeld');
+            if (links && (parseObjekt(alle_elemente[0]).left > parseSpielfeld(Spielfeld).left)) {
+                var kollidiert = false;
+                for (var k = 0; k < stille_elemente.length; k++) {
+
+                    if (checkeKollisionLinks(alle_elemente[0], stille_elemente[k])) {
+                        kollidiert = true;
+
+                        break;
+                    }
+                }
+                if (!kollidiert) {
+                    alle_elemente[0].style.left = (parseInt(window.getComputedStyle(alle_elemente[0]).getPropertyValue('left')) - 100) + 'px';
+                }
+            } else if (rechts && (parseObjekt(alle_elemente[0]).right < parseSpielfeld(Spielfeld).right)) {
+                var kollidiert = false;
+                for (var k = 0; k < stille_elemente.length; k++) {
+
+                    if (checkeKollisionRechts(alle_elemente[0], stille_elemente[k])) {
+                        kollidiert = true;
+
+                        break;
+                    }
+                }
+                if (!kollidiert) {
+                    alle_elemente[0].style.left = (parseInt(window.getComputedStyle(alle_elemente[0]).getPropertyValue('left')) + 100) + 'px';
+                }
+            }
+        }
+
+        function PausiereSpiel() {
+            pause = !pause;
+            document.getElementById("myText").value = pause ? "Fortsetzen" : "Pause";
+        }
+
+        document.onkeyup = function (e) {
+            if (e.keyCode == 65) {
+                links = false;
+            } else if (e.keyCode == 68) {
+                rechts = false;
+            }
+        }
+
+
+        function parseObjekt(object) {
+            var werte = {
+                top: parseInt(window.getComputedStyle(object).getPropertyValue('top')),
+                left: parseInt(window.getComputedStyle(object).getPropertyValue('left')),
+                bottom: parseInt(window.getComputedStyle(object).getPropertyValue('top')) + 100,
+                right: parseInt(window.getComputedStyle(object).getPropertyValue('left')) + 100,
+                width: parseInt(window.getComputedStyle(object).getPropertyValue('width'))
+            }
+            return werte;
+        }
+
+        function checkeKollision(element1, element2) {
+            var ele1 = parseObjekt(element1)
+            var ele2 = parseObjekt(element2)
+            if ((ele1.left > ele2.left && ele1.left < ele2.right) ||
+                (ele1.right > ele2.left && ele1.right < ele2.right)) {
+
+                if ((ele1.top > ele2.top && ele1.top < ele2.bottom) ||
+                    (ele1.bottom > ele2.top && ele1.bottom < ele2.bottom)) {
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function checkeKollisionLinks(element1, element2) {
+            var ele1 = parseObjekt(element1)
+            var ele2 = parseObjekt(element2)
+            if (ele1.left == ele2.right && ele1.top == ele2.top) { return true; }
+            return false;
+        }
+
+        function checkeKollisionRechts(element1, element2) {
+            var ele1 = parseObjekt(element1)
+            var ele2 = parseObjekt(element2)
+            if (ele1.right == ele2.left && ele1.top == ele2.top) { return true; }
+            return false;
+        }
+
+        function checkeKollisionUnten(element1, element2) {
+            var ele1 = parseObjekt(element1)
+            var ele2 = parseObjekt(element2)
+            if (ele1.bottom == ele2.top && ele1.left == ele2.left) { return true; }
+            return false;
+        }
+
+        function StarteTimeout() {
+            // nach x sekunden wird die funktion "BewegeAlleElemente" ausgeführt
+            window.setTimeout("BewegeAlleElemente();", 500);
+        }
+
+        function BloeckeAuslesen() {
+            var vorhandeneBloecke = [];
+
+        }
+
+        function NeuesElement() {
+            // es wird ein neues div erstellt mit den angegebenen Werten, wird den body hinzugefügt und dann in die var alle_elemente getan
+            var neues_element = document.createElement('div');
+            // neues_element.style.position = 'absolute';
+            //neues_element.style.top = '100px';
+            // //neues_element.style.left = Zufall() + 'px';
+            // neues_element.style.width = '100px';
+            // neues_element.style.height = '100px';
+            neues_element.style.backgroundColor = ZufallsFarben();
+            neues_element.className = 'startItem';
+            document.getElementById('Spielfeld').appendChild(neues_element);
+            alle_elemente.push(neues_element);
+        }
+
+        function ZufallsFarben() {
+            // array mit farben definiert
+            var random_color = ["Aqua", "Yellow", "GreenYellow", "DeepPink"];
+            // zufällige zahl generiert - abhängig von der länge des arrays
+            var random_number = Math.floor(Math.random() * random_color.length);
+            // es wird eine farbe aus dem Array genommen abhängig von der random Zahl
+            return random_color[random_number];
+        }
+
+
+
+
+        // function Zufall() {
+        //     var Spielfeld = document.getElementById('Spielfeld');
+        //   var position;
+        //   position = Math.floor(Math.random() * (parseSpielfeld(Spielfeld).width - 100)) + 11;
+        //    return position
+        // }
+
+        function BewegeAlleElemente() {
+            // variable anzahl_elemente enthält die anzahl aller elemente im Spiel
+            var anzahl_elemente = alle_elemente.length;
+
+            if (pause) {
+                StarteTimeout();
+                return;
+            }
+
+            // Startwert ist 0, Bedingung muss kleiner anzahl der elemente sein, Erhöhung um 1    
+            for (var i = 0; i < anzahl_elemente; i++) {
+                // Spielfeld holt sich das Element mit der ID Spielfeld
+                var Spielfeld = document.getElementById('Spielfeld');
+                //Wenn die Bedingung stimmt -> alle elemente.bottom < spielfeld.bottom
+                //
+                if (parseObjekt(alle_elemente[i]).bottom < 1000) {
+                    var kollidiert = false;
+                    for (var k = 0; k < stille_elemente.length; k++) {
+
+                        if (checkeKollisionUnten(alle_elemente[i], stille_elemente[k])) {       //Prüfe ob kollidiert
+                            kollidiert = true;
+                            anzahl_elemente--;
+                            break;
+                        }
+                    }
+                    if (!kollidiert) {          //Element kollidiert nicht => Nach unten bewegen
+                        console.log('test:', links, rechts)
+                        var mein_gefundenes_div = alle_elemente[i];
+                        var alter_top_wert = parseInt(window.getComputedStyle(mein_gefundenes_div).getPropertyValue('top'));
+                        mein_gefundenes_div.style.top = (alter_top_wert + 100) + 'px';
+                    }
+
+                    else {      //Element kollidiert => Game Over checken
+                        if (parseObjekt(alle_elemente[i]).top == 100) {     //Game Over
+                            if (window.confirm('WAS KANNNNNST DUUUUU!!!!')) {
+                                window.location = 'game_over_alert.htm'
+                                //Game Over Alert
+                            }
+                        } else {      //Noch kein Game Over
+                            console.log('test')
+                            stille_elemente.push(alle_elemente[i])
+                            console.log("punkte:", stille_elemente.length)
+                            // Er guckt wie wie viele elemente in stille elemente ist und schickt es nach unten
+                            document.getElementById("Punkte").value = stille_elemente.length;
+                            alle_elemente.splice(alle_elemente[i], 1);
+                            NeuesElement()
+                        }
+                    }
+
+                } else {
+                    // alle elemente werden in stille elemente gepusht
+                    stille_elemente.push(alle_elemente[i]);
+                    console.log("punkte:", stille_elemente.length)
+                    document.getElementById("Punkte").value = stille_elemente.length;
+                    // die elemente werden aufgeteilt
+                    alle_elemente.splice(alle_elemente[i], 1);
+                    // es wird um 1 abgezogen
+                    anzahl_elemente--;
+                    // Funktion NeuesElement wird aufgerufen 
+                    NeuesElement()
+                }
+
+
+            }
+
+            function BloeckeAuslesen (){
+           var vorhandeneBloecke = [];
+           var vorhandeneIndexes = [];
+           var anzahl_untereReihe = 0;
+           for(var i = 0; i < 10; i++)
+           {
+               vorhandeneBloecke.push(undefined);
+               vorhandeneIndexes.push(-1);
+           }
+
+           for(var k = 0; k < stille_elemente.length; k++)
+           {
+               var top_wert = parseObjekt(stille_elemente[k]).top;
+               var left_wert = parseObjekt(stille_elemente[k]).left;
+               if(top_wert == 1100)
+               {
+                   var index = (left_wert) / 100;
+                   vorhandeneBloecke[index] = stille_elemente[k];
+                   vorhandeneIndexes[index] = k;
+                   anzahl_untereReihe++;
+               }
+           }
+           if(anzahl_untereReihe == 10)
+           {
+               for(var z = 0; z < 10; z++)
+               {
+               document.body.removeChild(vorhandeneBloecke[z]);
+
+               }
+               for(var z = 0; z < 10; z++)
+               {
+               stille_elemente.splice(vorhandeneIndexes[z], 1);
+               }
+               for(var k = 0; k < stille_elemente.length; k++)
+               {
+                   stille_elemente[k].style.top = (parseObjekt(stille_elemente[k]).top + 100) +"px";
+               }
+           }
+
+
+           return vorhandeneBloecke;
+       }
+
+
+
+
+
+            window.onload = function () {
+                alle_elemente = document.getElementById('BewegeAlleElemente');
+                BewegeAlleElemente();
+            }
+
+
+
+            StarteTimeout();
+        }
+
+        function parseSpielfeld(object) {
+            var werte = {
+                top: parseInt(window.getComputedStyle(object).getPropertyValue('top')),
+                left: parseInt(window.getComputedStyle(object).getPropertyValue('left')),
+                bottom: parseInt(window.getComputedStyle(object).getPropertyValue('top')) + 1000,
+                right: parseInt(window.getComputedStyle(object).getPropertyValue('left')) + 1000,
+                width: parseInt(window.getComputedStyle(object).getPropertyValue('width'))
+            }
+
+            return werte;
+        }
+        
+
+    </script>
+
+
+</head>
+
+
+
+
+<body>
+
+    <!-- Start Button -->
+    <input type="button" class="myButton" value="Start" onclick="StarteTimeout()" />
+
+
+    <div class="grid-box" id="Spielfeld">
+        <!-- <div class="startItem" style="background-color:aliceblue"></div> -->
+    </div>
+    <!-- Und hier wird es dann geändert-->
+    <input type="text" class="myScore" id="Punkte" value="Score">
+    <p id="demo"></p>
+
+    <input type="button" value="Pause" onclick="PausiereSpiel()" id="myText"
+        style="font-size: 150%; margin-left: 1050px" />
+</body>
+
+
+
+</html>
